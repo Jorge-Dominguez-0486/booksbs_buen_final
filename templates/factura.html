@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Recibo de Compra</title>
+    <style type="text/css">
+        @page {
+            size: letter;
+            margin: 2cm;
+        }
+        body { 
+            font-family: Helvetica, sans-serif; 
+            color: #333; 
+            font-size: 12px; 
+        }
+        /* ENCABEZADO */
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            border-bottom: 2px solid #a4bdfc; 
+            padding-bottom: 15px; 
+        }
+        h1 { color: #2c3e50; margin: 0; font-size: 24px; }
+        p { margin: 5px 0; }
+
+        /* TABLAS GENERALES */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        td, th { 
+            padding: 8px; 
+            vertical-align: top; 
+        }
+
+        /* TABLA DE PRODUCTOS (LA QUE SE VEÍA MAL) */
+        .items-table { 
+            margin-top: 20px; 
+            border: 1px solid #ddd; /* Borde exterior suave */
+        }
+        .items-table th { 
+            background-color: #f2f2f2; 
+            border-bottom: 1px solid #ccc; 
+            font-weight: bold;
+            text-align: left;
+            font-size: 11px; /* Texto un poquito más pequeño para que quepa bien */
+        }
+        .items-table td { 
+            border-bottom: 1px solid #eee; 
+        }
+
+        /* TABLA DE TOTALES */
+        .totals-table { 
+            margin-top: 25px; 
+            width: 100%;
+        }
+        .totals-table td {
+            padding: 4px;
+            text-align: right;
+        }
+        .total-final {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 15px;
+            border-top: 2px solid #ddd;
+            padding-top: 8px;
+        }
+        
+        .footer { 
+            position: fixed; 
+            bottom: 0px; 
+            left: 0px; 
+            right: 0px;
+            text-align: center; 
+            font-size: 9px; 
+            color: #999; 
+            border-top: 1px solid #eee; 
+            padding-top: 10px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Books BS</h1>
+        <p>Comprobante de Compra Digital</p>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td width="55%">
+                <strong style="font-size: 14px;">Cliente:</strong><br>
+                {{ usuario.first_name }} {{ usuario.last_name }}<br>
+                <span style="color: #555;">{{ usuario.email }}</span>
+            </td>
+            <td width="45%" style="text-align: right;">
+                <strong>Pedido ID:</strong> #{{ pedido.id }}<br>
+                <strong>Fecha:</strong> {{ pedido.fecha_pedido|date:"d/m/Y H:i" }}<br>
+                <strong>Estado:</strong> {{ pedido.get_estado_pago_display }}
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <table class="items-table" repeat="1">
+        <thead>
+            <tr>
+                <th width="60%">Libro / Producto</th>
+                <th width="20%">Formato</th>
+                <th width="20%" style="text-align: right;">Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in items %}
+            <tr>
+                <td>
+                    <b>{{ detalle.libro.titulo }}</b>
+                </td>
+                <td>
+                    {{ detalle.libro.get_formato_display }}
+                </td>
+                <td style="text-align: right;">
+                    ${{ detalle.precio_compra }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="totals-table">
+        <tr>
+            <td width="65%"></td> 
+            <td width="20%">Subtotal:</td>
+            <td width="15%">${{ subtotal|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>IVA (16%):</td>
+            <td>${{ iva|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="total-final">Total Pagado:</td>
+            <td class="total-final">${{ pedido.total_pagado }}</td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        Gracias por tu compra en Books BS.<br>
+        "Lampara es a mis pies tu palabra, y lumbrera a mi camino." - Salmos 119:105
+    </div>
+
+</body>
+</html>
